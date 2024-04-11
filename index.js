@@ -10,18 +10,14 @@ program.action(() => {
   inquirer
     .prompt([
       {
-        type: "confirm",
-        name: "confirmQuestion",
-        message: "Are you sure you want to proceed?",
-        default: true,
+        type: "list",
+        name: "fruit",
+        message: "What is your favorite fruit?",
+        choices: ["Apple", "Banana", "Orange", "Grape"],
       },
     ])
     .then((answers) => {
-      if (answers.confirmQuestion) {
-        console.log(chalk.green(`User confirmed. Proceeding...`));
-      } else {
-        console.log(chalk.yellow(`User cancelled. Exiting...`));
-      }
+      console.log(chalk.green(`Your favorite fruit is ${answers.fruit}`));
     })
     .catch((error) => {
       console.log(chalk.red(`An error occurred: ${error}`));
@@ -35,21 +31,31 @@ program.parse(process.argv);
 
 1. นำเข้าไลบรารี Inquirer.js ด้วย `import inquirer from 'inquirer'`
 
-2. ใช้ `inquirer.prompt()` เพื่อแสดงคำถามแบบ Confirm โดยส่ง array ของ object ที่อธิบายคำถาม ประกอบด้วย:
-   - `type: 'confirm'` ระบุว่าเป็นคำถามแบบ Confirm
-   - `name: 'confirmQuestion'` กำหนดชื่อสำหรับเก็บค่าคำตอบ
-   - `message: 'Are you sure you want to proceed?'` ข้อความคำถามที่จะแสดงให้ผู้ใช้
-   - `default: true` ค่าเริ่มต้นของคำตอบ (ในที่นี้เป็น true หมายถึง "ใช่")
+2. ใช้ `inquirer.prompt()` เพื่อแสดงคำถามแบบ List โดยส่ง array ของ object ที่อธิบายคำถาม ประกอบด้วย:
+   - `type: 'list'` ระบุว่าเป็นคำถามแบบ List
+   - `name: 'fruit'` กำหนดชื่อสำหรับเก็บค่าคำตอบ
+   - `message: 'What is your favorite fruit?'` ข้อความคำถามที่จะแสดงให้ผู้ใช้
+   - `choices: ['Apple', 'Banana', 'Orange', 'Grape']` ตัวเลือกที่ให้ผู้ใช้เลือก เป็น array ของสตริง
 
-3. เมื่อผู้ใช้ตอบคำถามแล้ว ค่าคำตอบจะถูกส่งมาใน `answers` ซึ่งเป็น object ที่มี property ตามชื่อที่กำหนดใน `name`
+3. เมื่อผู้ใช้เลือกตัวเลือกแล้ว ค่าคำตอบจะถูกส่งมาใน `answers` ซึ่งเป็น object ที่มี property ตามชื่อที่กำหนดใน `name`
 
-4. ตรวจสอบค่าของ `answers.confirmQuestion`:
-   - ถ้าเป็น `true` แสดงว่าผู้ใช้ตอบ "ใช่" ให้แสดงข้อความ "User confirmed. Proceeding..." และดำเนินการต่อในโค้ดที่เกี่ยวข้อง
-   - ถ้าเป็น `false` แสดงว่าผู้ใช้ตอบ "ไม่" ให้แสดงข้อความ "User cancelled. Exiting..." และออกจากโปรแกรม
+4. แสดงข้อความที่บอกตัวเลือกที่ผู้ใช้เลือกด้วย `console.log()`
 
 5. ถ้ามีข้อผิดพลาดเกิดขึ้นระหว่างการถามคำถาม จะเข้าสู่บล็อก `catch` และแสดงข้อความแจ้งเตือนพร้อม error ที่เกิดขึ้น
 
-เมื่อรันโค้ดนี้ ผู้ใช้จะเห็นคำถามแบบ Confirm ว่า "Are you sure you want to proceed? (Y/n)" ถ้าผู้ใช้ตอบ "Y" (ใช่) โปรแกรมจะแสดงข้อความยืนยันและดำเนินการต่อ แต่ถ้าผู้ใช้ตอบ "n" (ไม่) โปรแกรมจะแสดงข้อความยกเลิกและจบการทำงาน
+เมื่อรันโค้ดนี้ ผู้ใช้จะเห็นคำถามพร้อมรายการตัวเลือกผลไม้ให้เลือก เช่น:
 
-คำถามแบบ Confirm เป็นประโยชน์เมื่อต้องการให้ผู้ใช้ยืนยันการกระทำบางอย่างก่อนดำเนินการต่อ เช่น การลบข้อมูล, การบันทึกการเปลี่ยนแปลง หรือการออกจากโปรแกรม ช่วยป้องกันความผิดพลาดจากการกระทำโดยไม่ได้ตั้งใจของผู้ใช้
+```
+? What is your favorite fruit? (Use arrow keys)
+❯ Apple
+  Banana
+  Orange
+  Grape
+```
+
+ผู้ใช้สามารถใช้ลูกศรขึ้นลงเพื่อเลื่อนไปยังตัวเลือกที่ต้องการ และกด Enter เพื่อเลือก จากนั้นโปรแกรมจะแสดงข้อความยืนยันตัวเลือกที่ผู้ใช้เลือก เช่น "Your favorite fruit is Banana"
+
+คำถามแบบ List เหมาะสำหรับกรณีที่มีตัวเลือกให้เลือกจำนวนไม่มาก และต้องการให้ผู้ใช้เลือกเพียงตัวเลือกเดียว ช่วยป้องกันการป้อนค่าที่ไม่ถูกต้องจากผู้ใช้ และทำให้การเลือกตัวเลือกเป็นเรื่องง่ายและรวดเร็ว
+
+คุณสามารถปรับแต่งตัวเลือกใน `choices` ได้ตามต้องการ รวมถึงเพิ่มตัวเลือกพิเศษอย่างเช่น separator หรือ disabled option เพื่อจัดกลุ่มและจำกัดตัวเลือกที่ให้ผู้ใช้เลือกได้อีกด้วย
 */
